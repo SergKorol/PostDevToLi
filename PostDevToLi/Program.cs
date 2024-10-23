@@ -19,7 +19,7 @@ internal static class Program
         var serviceProvider = new ServiceCollection()
             .AddHttpClient()
             .AddDbContext<ArticleDbContext>(options =>
-                options.UseSqlite("Data Source=posted_articles.db"))
+                options.UseSqlite("Data Source=./posted_articles.db"))
             .AddScoped<ArticleService>()
             .BuildServiceProvider();
 

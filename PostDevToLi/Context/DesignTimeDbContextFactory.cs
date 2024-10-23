@@ -9,7 +9,7 @@ public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Art
     public ArticleDbContext CreateDbContext(string[] args)
     {
         var builder = new DbContextOptionsBuilder<ArticleDbContext>();
-        builder.UseSqlite("Data Source=posted_articles.db");
+        builder.UseSqlite("Data Source=./posted_articles.db");
     
         return new ArticleDbContext(builder.Options);
     }
