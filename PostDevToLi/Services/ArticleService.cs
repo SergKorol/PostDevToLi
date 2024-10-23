@@ -55,7 +55,6 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
 
         foreach (var article in lastArticles)
         {
-            // Check if the article has already been posted
             bool isPosted = await dbContext.PostedArticles.AnyAsync(a => a.Url == article.Url);
 
             if (isPosted)
@@ -64,20 +63,17 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
                 continue;
             }
 
-            // Share the article and save it to the database if successful
             bool success = await ShareArticlesOnLinkedInAsync(article, accessToken);
 
-            if (success)
+            if (!success) continue;
+            dbContext.PostedArticles.Add(new PostedArticle
             {
-                dbContext.PostedArticles.Add(new PostedArticle
-                {
-                    Title = article.Title,
-                    Url = article.Url,
-                    PublishedAt = article.PublishedAt
-                });
+                Title = article.Title,
+                Url = article.Url,
+                PublishedAt = article.PublishedAt
+            });
 
-                await dbContext.SaveChangesAsync();
-            }
+            await dbContext.SaveChangesAsync();
         }
     }
 
