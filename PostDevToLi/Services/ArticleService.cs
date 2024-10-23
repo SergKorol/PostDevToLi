@@ -34,7 +34,9 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
 
         foreach (var article in lastArticles)
         {
+            logger.LogInformation("START READ");
             bool isPosted = await dbContext.PostedArticles.AnyAsync(a => a.Url == article.Url);
+            logger.LogInformation("END READ");
 
             if (isPosted)
             {
@@ -42,15 +44,15 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
                 continue;
             }
 
-            bool success = await ShareArticlesOnLinkedInAsync(article, accessToken);
-            if (!success) continue;
+            // bool success = await ShareArticlesOnLinkedInAsync(article, accessToken);
+            // if (!success) continue;
             dbContext.PostedArticles.Add(new PostedArticle
             {
                 Title = article.Title,
                 Url = article.Url,
                 PublishedAt = article.PublishedAt
             });
-
+            logger.LogInformation("DATA UPDATED");
             await dbContext.SaveChangesAsync();
         }
     }
