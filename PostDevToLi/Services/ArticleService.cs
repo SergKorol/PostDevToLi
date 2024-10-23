@@ -12,27 +12,6 @@ namespace PostDevToLi.Services;
 
 public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleService> logger, ArticleDbContext dbContext)
 {
-    // public async Task GetAndShareArticlesAsync(string? apiKey, string? accessToken, int hoursAgo)
-    // {
-    //     var articles = await FetchArticlesAsync(apiKey);
-    //
-    //     if (articles == null || articles.Length == 0)
-    //     {
-    //         logger.LogWarning("No articles found to share");
-    //         return;
-    //     }
-    //
-    //     var lastArticles = articles.Where(x => x.PublishedAt >= DateTime.UtcNow.AddHours(hoursAgo * -1)).ToList();
-    //
-    //     if (lastArticles.Count != 0)
-    //     {
-    //         await ShareArticlesOnLinkedInAsync(lastArticles, accessToken);
-    //     }
-    //     else
-    //     {
-    //         logger.LogInformation("No new articles from the past {HoursAgo} days", hoursAgo);
-    //     }
-    // }
     public async Task GetAndShareArticlesAsync(string? apiKey, string? accessToken, int hoursAgo)
     {
         var articles = await FetchArticlesAsync(apiKey);
