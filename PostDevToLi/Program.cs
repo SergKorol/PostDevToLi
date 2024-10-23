@@ -25,6 +25,7 @@ internal static class Program
 
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<ArticleDbContext>();
+        await dbContext.Database.MigrateAsync();
         var articleService = scope.ServiceProvider.GetRequiredService<ArticleService>();
 
         TryParse(hoursAgo, out var hoursNumber);
