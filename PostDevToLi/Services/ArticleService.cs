@@ -10,9 +10,9 @@ using PostDevToLi.Models.linkedin.com;
 
 namespace PostDevToLi.Services;
 
-public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleService> logger, ArticleDbContext dbContext)
+public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleService> logger)
 {
-    public async Task GetAndShareArticlesAsync(string? apiKey, string? accessToken, int hoursAgo)
+    public async Task GetAndShareArticlesAsync(string? apiKey, string? accessToken, int hoursAgo, ArticleDbContext dbContext)
     {
         var articles = await FetchArticlesAsync(apiKey);
 
@@ -43,7 +43,6 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
             }
 
             bool success = await ShareArticlesOnLinkedInAsync(article, accessToken);
-
             if (!success) continue;
             dbContext.PostedArticles.Add(new PostedArticle
             {

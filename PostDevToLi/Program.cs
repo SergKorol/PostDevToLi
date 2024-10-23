@@ -18,16 +18,17 @@ internal static class Program
 
         var serviceProvider = new ServiceCollection()
             .AddHttpClient()
-            .AddSingleton<ArticleService>()
             .AddDbContext<ArticleDbContext>(options =>
                 options.UseSqlite("Data Source=posted_articles.db"))
+            .AddScoped<ArticleService>()
             .BuildServiceProvider();
 
-        var articleService = serviceProvider.GetRequiredService<ArticleService>();
+        using var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ArticleDbContext>();
+        var articleService = scope.ServiceProvider.GetRequiredService<ArticleService>();
 
         TryParse(hoursAgo, out var hoursNumber);
-        await articleService.GetAndShareArticlesAsync(apiKey, accessToken, hoursNumber);
-        
+        await articleService.GetAndShareArticlesAsync(apiKey, accessToken, hoursNumber, dbContext);
     }
     
     private static string? GetArgumentValue(string[] args, string key)
