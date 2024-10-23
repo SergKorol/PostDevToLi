@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PostDevToLi.Services;
+using static System.Int16;
 
 namespace PostDevToLi;
 
@@ -10,6 +11,7 @@ internal static class Program
     {
         var apiKey = GetArgumentValue(args, "--api-key");
         var accessToken = GetArgumentValue(args, "--access-token");
+        var hoursAgo = GetArgumentValue(args, "--ago");
 
 
         var serviceProvider = new ServiceCollection()
@@ -19,7 +21,8 @@ internal static class Program
 
         var articleService = serviceProvider.GetRequiredService<ArticleService>();
 
-        await articleService.GetAndShareArticlesAsync(apiKey, accessToken);
+        TryParse(hoursAgo, out var hoursNumber);
+        await articleService.GetAndShareArticlesAsync(apiKey, accessToken, hoursNumber);
         
     }
     
@@ -27,5 +30,4 @@ internal static class Program
     {
         return (from arg in args where arg.StartsWith(key) select arg.Split('=')[1].Trim('\'')).FirstOrDefault();
     }
-    
 }
