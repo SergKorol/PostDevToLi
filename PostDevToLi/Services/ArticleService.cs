@@ -34,11 +34,9 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
 
         foreach (var article in lastArticles)
         {
-            logger.LogInformation("START READ");
             Console.WriteLine("START READ");
             bool isPosted = await dbContext.PostedArticles.AnyAsync(a => a.Url == article.Url);
             Console.WriteLine("END READ");
-            logger.LogInformation("END READ");
 
             if (isPosted)
             {
@@ -54,9 +52,9 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
                 Url = article.Url,
                 PublishedAt = article.PublishedAt
             });
-            Console.WriteLine("DATA UPDATE");
-            logger.LogInformation("DATA UPDATED");
+            
             await dbContext.SaveChangesAsync();
+            Console.WriteLine($"DATA UPDATE {dbContext.PostedArticles.FirstOrDefault().Title}");
         }
     }
 
