@@ -2,14 +2,37 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using PostDevToLi.Context;
 using PostDevToLi.Models.dev.to;
 using PostDevToLi.Models.linkedin.com;
 
 namespace PostDevToLi.Services;
 
-public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleService> logger)
+public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleService> logger, ArticleDbContext dbContext)
 {
+    // public async Task GetAndShareArticlesAsync(string? apiKey, string? accessToken, int hoursAgo)
+    // {
+    //     var articles = await FetchArticlesAsync(apiKey);
+    //
+    //     if (articles == null || articles.Length == 0)
+    //     {
+    //         logger.LogWarning("No articles found to share");
+    //         return;
+    //     }
+    //
+    //     var lastArticles = articles.Where(x => x.PublishedAt >= DateTime.UtcNow.AddHours(hoursAgo * -1)).ToList();
+    //
+    //     if (lastArticles.Count != 0)
+    //     {
+    //         await ShareArticlesOnLinkedInAsync(lastArticles, accessToken);
+    //     }
+    //     else
+    //     {
+    //         logger.LogInformation("No new articles from the past {HoursAgo} days", hoursAgo);
+    //     }
+    // }
     public async Task GetAndShareArticlesAsync(string? apiKey, string? accessToken, int hoursAgo)
     {
         var articles = await FetchArticlesAsync(apiKey);
@@ -20,15 +43,41 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
             return;
         }
 
-        var lastArticles = articles.Where(x => x.PublishedAt >= DateTime.UtcNow.AddHours(hoursAgo * -1)).ToList();
+        var lastArticles = articles
+            .Where(x => x.PublishedAt >= DateTime.UtcNow.AddHours(hoursAgo * -1))
+            .ToList();
 
-        if (lastArticles.Count != 0)
+        if (!lastArticles.Any())
         {
-            await ShareArticlesOnLinkedInAsync(lastArticles, accessToken);
+            logger.LogInformation("No new articles from the past {HoursAgo} hours", hoursAgo);
+            return;
         }
-        else
+
+        foreach (var article in lastArticles)
         {
-            logger.LogInformation("No new articles from the past {HoursAgo} days", hoursAgo);
+            // Check if the article has already been posted
+            bool isPosted = await dbContext.PostedArticles.AnyAsync(a => a.Url == article.Url);
+
+            if (isPosted)
+            {
+                logger.LogInformation("Article '{Title}' has already been shared", article.Title);
+                continue;
+            }
+
+            // Share the article and save it to the database if successful
+            bool success = await ShareArticlesOnLinkedInAsync(article, accessToken);
+
+            if (success)
+            {
+                dbContext.PostedArticles.Add(new PostedArticle
+                {
+                    Title = article.Title,
+                    Url = article.Url,
+                    PublishedAt = article.PublishedAt
+                });
+
+                await dbContext.SaveChangesAsync();
+            }
         }
     }
 
@@ -50,7 +99,7 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
         return null;
     }
 
-    private async Task ShareArticlesOnLinkedInAsync(IEnumerable<Article> articles, string? accessToken)
+    private async Task<bool> ShareArticlesOnLinkedInAsync(Article article, string? accessToken)
     {
         var client = GetHttpClient();
         var personUrn = await GetPersonUrnAsync(accessToken);
@@ -58,40 +107,41 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
         if (string.IsNullOrEmpty(personUrn))
         {
             logger.LogError("Failed to retrieve LinkedIn user info");
-            return;
+            return false;
         }
 
-        foreach (var article in articles)
-        {
-            var requestMessage = CreateLinkedInPostRequest(accessToken);
-            var shareRequest = CreateLinkedInPostRequestBody(article, personUrn);
+        var requestMessage = CreateLinkedInPostRequest(accessToken);
+        var shareRequest = CreateLinkedInPostRequestBody(article, personUrn);
             
-            var jsonRequest = JsonSerializer.Serialize(shareRequest);
-            var jsonContent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
-            requestMessage.Content = jsonContent;
+        var jsonRequest = JsonSerializer.Serialize(shareRequest);
+        var jsonContent = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+        requestMessage.Content = jsonContent;
 
-            var response = await client.SendAsync(requestMessage);
-            var content = await response.Content.ReadAsStringAsync();
+        var response = await client.SendAsync(requestMessage);
+        var content = await response.Content.ReadAsStringAsync();
 
-            if (response.IsSuccessStatusCode)
-            {
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var linkedInResponse = JsonSerializer.Deserialize<LinkedInResponse>(content, options);
+        if (response.IsSuccessStatusCode)
+        {
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var linkedInResponse = JsonSerializer.Deserialize<LinkedInResponse>(content, options);
 
-                if (linkedInResponse?.IsSuccess == true)
-                {
-                    logger.LogInformation("Post {LinkedInResponse} was successfully shared", linkedInResponse.Id);
-                }
-            }
-            else if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
+            if (linkedInResponse?.IsSuccess == true)
             {
-                logger.LogWarning("The article '{Title}' has already been shared", article.Title);
-            }
-            else
-            {
-                logger.LogError("Failed to share article: {ArticleTitle}. Status Code: {ResponseStatusCode}", article.Title, response.StatusCode);
+                logger.LogInformation("Post {LinkedInResponse} was successfully shared", linkedInResponse.Id);
+                return true;
             }
         }
+        else if (response.StatusCode == HttpStatusCode.UnprocessableEntity)
+        {
+            logger.LogWarning("The article '{Title}' has already been shared", article.Title);
+            return false;
+        }
+        else
+        {
+            logger.LogError("Failed to share article: {ArticleTitle}. Status Code: {ResponseStatusCode}", article.Title, response.StatusCode);
+            return false;
+        }
+        return false;
     }
 
     private async Task<string> GetPersonUrnAsync(string? accessToken)

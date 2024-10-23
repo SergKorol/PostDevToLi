@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using PostDevToLi.Context;
 using PostDevToLi.Services;
 using static System.Int16;
 
@@ -17,6 +19,8 @@ internal static class Program
         var serviceProvider = new ServiceCollection()
             .AddHttpClient()
             .AddSingleton<ArticleService>()
+            .AddDbContext<ArticleDbContext>(options =>
+                options.UseSqlite("Data Source=posted_articles.db"))
             .BuildServiceProvider();
 
         var articleService = serviceProvider.GetRequiredService<ArticleService>();
