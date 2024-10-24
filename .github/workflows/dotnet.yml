@@ -27,17 +27,6 @@ jobs:
     - name: Ensure data folder exists
       run: mkdir -p ./data
 
-    - name: Download SQLite DB artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: posted-articles-db
-        path: ./data/
-      continue-on-error: true 
-
-    - name: List files in data directory
-      run: | 
-        cd data
-        ls
 
     # Move the database to the correct location for your app
     - name: Move DB to the app folder
@@ -64,5 +53,16 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: posted-articles-db  # The name of the artifact
-        path: ./data/posted_articles.db # Ensure this points to your SQLite DB
+        path: ./data/posted_articles.db
+    - name: Download SQLite DB artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: posted-articles-db
+        path: ./data/
+      continue-on-error: true 
+
+    - name: List files in data directory
+      run: | 
+        cd data
+        ls
 
