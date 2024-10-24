@@ -28,8 +28,15 @@ jobs:
     - name: Ensure data folder exists
       run: |
         mkdir -p ./data
-        cd .github
-        mkdir .tmp
+    - name: Commit and Push changes
+      run: |
+        git config --local user.email "korol_sergey@me.com"
+        git config --local user.name "Serhii Korol"
+        git add ./data
+        git commit -m "Add data folder"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     
     - name: Download SQLite DB
