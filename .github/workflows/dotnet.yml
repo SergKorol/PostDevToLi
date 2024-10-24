@@ -25,7 +25,8 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Ensure data folder exists
-      run: mkdir -p ./data
+      run: mkdir -p ./PostDevToLi/data
+    
     - name: Download SQLite DB
       uses: actions/download-artifact@v4
       with:
