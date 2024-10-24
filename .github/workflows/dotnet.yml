@@ -24,6 +24,11 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
+    - name: Get latest artifact run id
+      run: |
+        ARTIFACT_RUN_ID=$(curl -s "https://api.github.com/repos/${{ github.repository }}/actions/artifacts?per_page=1" | jq '.artifacts[0].workflow_run.id')
+        echo "artifact_run_id=$ARTIFACT_RUN_ID" >> $GITHUB_ENV
+        echo "$GITHUB_ENV"
     # Attempt to download the artifact (if uploaded in the same or previous runs)
     - name: Download artifact (SQLite DB)
       uses: actions/download-artifact@v4
