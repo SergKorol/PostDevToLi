@@ -31,9 +31,10 @@ jobs:
         mkdir -p ./data
     - name: Commit and Push changes
       run: |
+        git status
         git config --local user.email "korol_sergey@me.com"
         git config --local user.name "Serhii Korol"
-        git add ./data
+        git add -A
         git commit -m "Add data folder"
         git push origin database
       env:
