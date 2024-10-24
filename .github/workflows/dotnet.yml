@@ -42,6 +42,7 @@ jobs:
     # Move the database to the correct location for your app
     - name: Move DB to the app folder
       run: |
+        cd data
         ls
         mv ./data/posted_articles.db ./PostDevToLi/bin/Debug/net8.0/posted_articles.db
       continue-on-error: true
