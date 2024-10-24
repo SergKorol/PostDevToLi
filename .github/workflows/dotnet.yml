@@ -41,6 +41,7 @@ jobs:
     - name: Move DB to the application folder
       run: |
         mv ./data/posted_articles.db ./PostDevToLi/PostDevToLi/posted_articles.db
+      continue-on-error: true
     - name: Run Application (or Tests)
       run: |
         dotnet run --project PostDevToLi/PostDevToLi.csproj -- \
