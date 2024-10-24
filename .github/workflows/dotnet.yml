@@ -24,7 +24,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Run Application (or Tests)
-      run: dotnet run --project PostDevToLi/PostDevToLi
+      run: dotnet run --project PostDevToLi
     - name: Upload SQLite DB as an artifact
       uses: actions/upload-artifact@v4
       with:
