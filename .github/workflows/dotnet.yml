@@ -41,7 +41,7 @@ jobs:
     - name: Move DB to the app folder
       run: |
         ls
-        mv ./data/posted_articles.db ./PostDevToLi/PostDevToLi/posted_articles.db
+        mv ./data/posted_articles.db ./PostDevToLi/bin/Debug/net8.0/posted_articles.db
       continue-on-error: true
     - name: Run Application (or Tests)
       run: |
