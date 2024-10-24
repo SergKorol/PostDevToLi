@@ -28,6 +28,7 @@ jobs:
     - name: Ensure data folder exists
       run: |
         mkdir -p ./data
+        cd .github
         mkdir .tmp
 
     
