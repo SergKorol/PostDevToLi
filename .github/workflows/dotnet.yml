@@ -38,7 +38,7 @@ jobs:
       run: ls -la ./data
 
     # Move the database to the correct location for your app
-    - name: Move DB to the application folder
+    - name: Move DB to the app folder
       run: |
         mv ./data/posted_articles.db ./PostDevToLi/PostDevToLi/posted_articles.db
       continue-on-error: true
