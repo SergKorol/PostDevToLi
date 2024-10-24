@@ -47,7 +47,6 @@ jobs:
         --api-key=42vErWKs2oipGf6pYuBWnQPt \
         --access-token=AQXD2BR_zOyTZ7bQlUkm0KNNfm4PwjpxupMQ_M1rowTA74f8Zh9KYEfo27jpO5e-3I57VaPrUo44kH15kNPUqV73BOFLVa6RjPSWXZJgCiIzMydT9AkM-wsCpBHVhnaY0Gm4pUiqBDRLSdhgW9SRd-hz8bVAmPpC9hMsoVn4XjclPGKN0bJtvlG2OjfvsiR-PificLSYclIqzDkT7UPpBcNUnal1BNZ6VgGPXGWG2q29rESUQ0Phr37YYiSOtTzkeNeKH0esTOtzVpbnXTyXjq_SsXmL2QoWgVOiZmU-lNzzrIbTR3r0uWmSn1v6bzyWAS9S6aFUdxnb0zENR8SQ6IAyxV6N2Q \
         --ago=72--api-key=42vErWKs2oipGf6pYuBWnQPt
-        cd ../../../
         ls
         du -h posted_articles.db
 
