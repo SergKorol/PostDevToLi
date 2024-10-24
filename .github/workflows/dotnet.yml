@@ -34,9 +34,6 @@ jobs:
     - name: List contents of the data folder
       run: ls -la ./data
 
-    - name: Check for ignored files
-      run: git check-ignore -v ./data/*
-
     - name: Git status
       run: git status
 
