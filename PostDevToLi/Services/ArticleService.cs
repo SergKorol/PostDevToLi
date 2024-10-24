@@ -22,9 +22,9 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
             return;
         }
 
-        var lastArticles = articles
-            .Where(x => x.PublishedAt >= DateTime.UtcNow.AddHours(hoursAgo * -1))
-            .ToList();
+        var lastArticles = articles;
+            // .Where(x => x.PublishedAt >= DateTime.UtcNow.AddHours(hoursAgo * -1))
+            // .ToList();
 
         if (!lastArticles.Any())
         {
