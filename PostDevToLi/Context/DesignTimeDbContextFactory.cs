@@ -8,7 +8,7 @@ public sealed class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Art
     public ArticleDbContext CreateDbContext(string[] args)
     {
         var builder = new DbContextOptionsBuilder<ArticleDbContext>();
-        var dbPath = Path.Combine("../../../", "posted_articles.db");
+        var dbPath = Path.Combine(AppContext.BaseDirectory, "posted_articles.db");
         builder.UseSqlite($"Data Source={dbPath}");
     
         return new ArticleDbContext(builder.Options);
