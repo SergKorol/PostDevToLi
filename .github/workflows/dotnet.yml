@@ -25,7 +25,9 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Ensure data folder exists
-      run: mkdir -p ./data
+      run: | 
+        mkdir -p ./data
+        ls
     
     - name: Download SQLite DB
       uses: actions/download-artifact@v4
@@ -37,6 +39,7 @@ jobs:
     # Move the database to the correct location for your app
     - name: Move DB to the app folder
       run: |
+        ls
         cd data
         ls
         mv ./data/posted_articles.db ./PostDevToLi/bin/Debug/net8.0/posted_articles.db
