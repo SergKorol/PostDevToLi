@@ -29,7 +29,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: posted-articles-db  # The name of the artifact
-        path: ./PostDevToLi/PostDevToLi/bin/Debug/net8.0/posted_articles.db  # Ensure this points to your SQLite DB
+        path: ./PostDevToLi/bin/Debug/net8.0/posted_articles.db  # Ensure this points to your SQLite DB
 
 
     - name: Test
