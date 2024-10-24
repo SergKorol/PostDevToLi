@@ -23,19 +23,14 @@ jobs:
       
     - name: Build
       run: dotnet build --no-restore
-
+    - name: Run Application (or Tests)
+      run: dotnet run --project PostDevToLi/PostDevToLi
     - name: Upload SQLite DB as an artifact
       uses: actions/upload-artifact@v4
       with:
         name: posted-articles-db  # The name of the artifact
         path: ./path/to/posted_articles.db  # Ensure this points to your SQLite DB
 
-    # Download the SQLite DB Artifact
-    - name: Download SQLite DB Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: posted-articles-db  # The name of the artifact to download
-        path: ./data/ 
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
