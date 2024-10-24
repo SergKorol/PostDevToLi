@@ -15,11 +15,11 @@ internal static class Program
         var accessToken = GetArgumentValue(args, "--access-token");
         var hoursAgo = GetArgumentValue(args, "--ago");
 
-
+        var dbPath = Path.Combine(AppContext.BaseDirectory, "posted_articles.db");
         var serviceProvider = new ServiceCollection()
             .AddHttpClient()
             .AddDbContext<ArticleDbContext>(options =>
-                options.UseSqlite(Path.Combine(AppContext.BaseDirectory, "posted_articles.db")))
+                options.UseSqlite($"Data Source={dbPath}"))
             .AddScoped<ArticleService>()
             .BuildServiceProvider();
 
