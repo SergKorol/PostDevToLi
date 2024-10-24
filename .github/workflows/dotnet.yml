@@ -49,7 +49,7 @@ jobs:
         --ago=72--api-key=42vErWKs2oipGf6pYuBWnQPt
         cd PostDevToLi/bin/Debug/net8.0
         cd ../../../
-        ls
+        du -h posted_articles.db
 
     - name: Move DB to the artifact folder
       run: |
