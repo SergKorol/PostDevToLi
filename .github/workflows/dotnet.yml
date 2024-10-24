@@ -31,22 +31,6 @@ jobs:
         mkdir -p ./data
         touch ./data/.gitkeep
 
-    - name: List contents of the data folder
-      run: ls -la ./data
-
-    - name: Git status
-      run: git status
-
-    - name: Commit and Push changes
-      run: |
-        git config --local user.email "korol_sergey@me.com"
-        git config --local user.name "Serhii Korol"
-        git add -A
-        git commit -m "Add data folder"
-        git push origin database
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     
     - name: Download SQLite DB
       uses: actions/download-artifact@v4
@@ -75,9 +59,13 @@ jobs:
     - name: Move DB to the artifact folder
       run: |
         mv ./PostDevToLi/posted_articles.db ./data/posted_articles.db
-        cd data
-        du -h posted_articles.db
-
+        git config --local user.email "korol_sergey@me.com"
+        git config --local user.name "Serhii Korol"
+        git add -A
+        git commit -m "Add data folder"
+        git push origin database
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Upload SQLite DB as an artifact
       uses: actions/upload-artifact@v4
       with:
