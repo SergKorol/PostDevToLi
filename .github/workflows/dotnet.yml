@@ -26,19 +26,29 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Ensure data folder exists
+    - name: Ensure data folder exists with placeholder
       run: |
         mkdir -p ./data
+        touch ./data/.gitkeep
+
+    - name: List contents of the data folder
+      run: ls -la ./data
+
+    - name: Check for ignored files
+      run: git check-ignore -v ./data/*
+
+    - name: Git status
+      run: git status
+
     - name: Commit and Push changes
       run: |
-        git status
         git config --local user.email "korol_sergey@me.com"
         git config --local user.name "Serhii Korol"
         git add -A
         git commit -m "Add data folder"
         git push origin database
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     
     - name: Download SQLite DB
