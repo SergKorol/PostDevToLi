@@ -1,0 +1,36 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Run Application (or Tests)
+      run: dotnet run --project PostDevToLi
+    - name: Upload SQLite DB as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: posted-articles-db  # The name of the artifact
+        path: ./PostDevToLi/bin/Debug/net8.0/posted_articles.db  # Ensure this points to your SQLite DB
+
+
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
