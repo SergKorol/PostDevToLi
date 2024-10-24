@@ -35,11 +35,12 @@ jobs:
       continue-on-error: true 
 
     - name: List files in data directory
-      run: ls -la ./data
+      run: ls
 
     # Move the database to the correct location for your app
     - name: Move DB to the app folder
       run: |
+        ls
         mv ./data/posted_articles.db ./PostDevToLi/PostDevToLi/posted_articles.db
       continue-on-error: true
     - name: Run Application (or Tests)
