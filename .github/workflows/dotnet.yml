@@ -23,6 +23,18 @@ jobs:
       
     - name: Build
       run: dotnet build --no-restore
+
+    - name: Download SQLite DB artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: posted-articles-db
+        path: ./data/
+      continue-on-error: true # Define where you want to store the downloaded artifact
+
+    # Move the database to the correct location for your app
+    - name: Move DB to the application folder
+      run: |
+        mv ./data/posted_articles.db ./PostDevToLi/PostDevToLi/posted_articles.db
     - name: Run Application (or Tests)
       run: |
         dotnet run --project PostDevToLi/PostDevToLi.csproj -- \
