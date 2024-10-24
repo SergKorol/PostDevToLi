@@ -24,17 +24,18 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
 
-    - name: Get latest artifact run id
-      run: |
-        ARTIFACT_RUN_ID=$(curl -s "https://api.github.com/repos/${{ github.repository }}/actions/artifacts?per_page=1" | jq '.artifacts[0].workflow_run.id')
-        echo "artifact_run_id=$ARTIFACT_RUN_ID" >> $GITHUB_ENV
-        echo "${{ ARTIFACT_RUN_ID }}"
-    # Attempt to download the artifact (if uploaded in the same or previous runs)
-    - name: Download artifact (SQLite DB)
+    - name: Upload SQLite DB as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: posted-articles-db  # The name of the artifact
+        path: ./path/to/posted_articles.db  # Ensure this points to your SQLite DB
+
+    # Download the SQLite DB Artifact
+    - name: Download SQLite DB Artifact
       uses: actions/download-artifact@v4
       with:
-        name: posted-articles-db  # Ensure this is the exact artifact name used during the upload
-        path: ./data/
+        name: posted-articles-db  # The name of the artifact to download
+        path: ./data/ 
 
     - name: Test
       run: dotnet test --no-build --verbosity normal
