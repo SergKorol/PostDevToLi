@@ -31,21 +31,10 @@ jobs:
         mkdir -p ./data
         touch ./data/.gitkeep
 
-    
-    - name: Download SQLite DB
-      uses: actions/download-artifact@v4
-      with:
-        name: posted-articles-db
-        path: ./data/
-      continue-on-error: true 
-
     # Move the database to the correct location for your app
     - name: Move DB to the app folder
       run: |
-        ls
-        cd data
-        ls
-        mv ./data/posted_articles.db ./PostDevToLi/bin/Debug/net8.0/posted_articles.db
+        mv ./data/posted_articles.db ./PostDevToLi/posted_articles.db
       continue-on-error: true
     - name: Run Application (or Tests)
       run: |
@@ -59,27 +48,11 @@ jobs:
     - name: Move DB to the artifact folder
       run: |
         mv ./PostDevToLi/posted_articles.db ./data/posted_articles.db
-        git config --local user.email "korol_sergey@me.com"
-        git config --local user.name "Serhii Korol"
-        git add -A
-        git commit -m "Add data folder"
+        git config --local user.email github-actions@github.com
+        git config --local user.name github-actions
+        git add .
+        git commit -m "update"
         git push origin database
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    - name: Upload SQLite DB as an artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: posted-articles-db  # The name of the artifact
-        path: ./data/posted_articles.db
-    - name: Download SQLite DB artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: posted-articles-db
-        path: ./data/
-      continue-on-error: true 
-
-    - name: List files in data directory
-      run: | 
-        cd data
-        ls
 
