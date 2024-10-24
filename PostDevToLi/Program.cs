@@ -15,7 +15,7 @@ internal static class Program
         var accessToken = GetArgumentValue(args, "--access-token");
         var hoursAgo = GetArgumentValue(args, "--ago");
 
-        var dbPath = Path.Combine("../../../", "posted_articles.db");
+        var dbPath = Path.Combine("../../../", "posted_articles_new.db");
         var serviceProvider = new ServiceCollection()
             .AddHttpClient()
             .AddDbContext<ArticleDbContext>(options =>
