@@ -35,7 +35,7 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
         foreach (var article in lastArticles)
         {
             bool isPosted = await dbContext.PostedArticles.AnyAsync(a => a.Url == article.Url);
-
+            Console.WriteLine($"{article.Url} is posted to {isPosted}");
             if (isPosted)
             {
                 logger.LogInformation("Article '{Title}' has already been shared", article.Title);
@@ -52,11 +52,11 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
             });
             
             await dbContext.SaveChangesAsync();
-            foreach (var art in dbContext.PostedArticles)
-            {
-                Console.WriteLine($"DATA UPDATE {art.Title}");
-            }
-            
+        }
+        
+        foreach (var art in dbContext.PostedArticles)
+        {
+            Console.WriteLine($"DATA UPDATE {art.Title}");
         }
     }
 
