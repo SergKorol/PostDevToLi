@@ -32,7 +32,10 @@ jobs:
       with:
         name: posted-articles-db
         path: ./data/
-      continue-on-error: true # Define where you want to store the downloaded artifact
+      continue-on-error: true 
+
+    - name: List files in data directory
+      run: ls -la ./data
 
     # Move the database to the correct location for your app
     - name: Move DB to the application folder
