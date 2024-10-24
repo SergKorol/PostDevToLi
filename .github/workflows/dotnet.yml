@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    permissions: write-all
     runs-on: ubuntu-latest
 
     steps:
@@ -27,17 +28,7 @@ jobs:
     - name: Ensure data folder exists
       run: |
         mkdir -p ./data
-        touch ./data/.gitkeep  # Create a placeholder file
 
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "korol_sergey@me.com"
-        git config --local user.name "SergKorol"
-        git add ./data/.gitkeep
-        git commit -m "Add data folder"
-        git push
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
     
     - name: Download SQLite DB
       uses: actions/download-artifact@v4
