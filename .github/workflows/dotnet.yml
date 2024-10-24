@@ -28,6 +28,7 @@ jobs:
     - name: Ensure data folder exists
       run: |
         mkdir -p ./data
+        mkdir .tmp
 
     
     - name: Download SQLite DB
