@@ -35,7 +35,9 @@ jobs:
       continue-on-error: true 
 
     - name: List files in data directory
-      run: ls
+      run: | 
+        cd data
+        ls
 
     # Move the database to the correct location for your app
     - name: Move DB to the app folder
