@@ -53,11 +53,6 @@ public class ArticleService(IHttpClientFactory clientFactory, ILogger<ArticleSer
             
             await dbContext.SaveChangesAsync();
         }
-        
-        foreach (var art in dbContext.PostedArticles)
-        {
-            Console.WriteLine($"DATA UPDATE {art.Title}");
-        }
     }
 
     private async Task<Article[]?> FetchArticlesAsync(string? apiKey)
