@@ -23,7 +23,6 @@ internal static class Program
             if (projectRoot != null)
             {
                 var dbPath = Path.Combine(projectRoot, "posted_articles.db");
-                Console.WriteLine($"DB path: {dbPath}");
                 var serviceProvider = new ServiceCollection()
                     .AddHttpClient()
                     .AddDbContext<ArticleDbContext>(options =>
