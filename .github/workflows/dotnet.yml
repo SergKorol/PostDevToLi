@@ -41,7 +41,6 @@ jobs:
         dotnet run --project PostDevToLi/PostDevToLi.csproj -- \
         --api-key="${{ secrets.DEV_TO_API_KEY }}" \
         --access-token="${{ secrets.ACCESS_TOKEN }}" \
-        --ago=72
 
     - name: Move DB to the artifact folder
       run: |
