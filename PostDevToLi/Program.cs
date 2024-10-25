@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using PostDevToLi.Context;
 using PostDevToLi.Services;
@@ -15,21 +16,29 @@ internal static class Program
         var accessToken = GetArgumentValue(args, "--access-token");
         var hoursAgo = GetArgumentValue(args, "--ago");
 
-        var dbPath = Path.Combine(AppContext.BaseDirectory, "posted_articles.db");
-        var serviceProvider = new ServiceCollection()
-            .AddHttpClient()
-            .AddDbContext<ArticleDbContext>(options =>
-                options.UseSqlite($"Data Source={dbPath}"))
-            .AddScoped<ArticleService>()
-            .BuildServiceProvider();
+        var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        if (assemblyLocation != null)
+        {
+            var projectRoot = Directory.GetParent(assemblyLocation)?.Parent?.Parent?.FullName;
+            if (projectRoot != null)
+            {
+                var dbPath = Path.Combine(projectRoot, "posted_articles.db");
+                var serviceProvider = new ServiceCollection()
+                    .AddHttpClient()
+                    .AddDbContext<ArticleDbContext>(options =>
+                        options.UseSqlite($"Data Source={dbPath}"))
+                    .AddScoped<ArticleService>()
+                    .BuildServiceProvider();
 
-        using var scope = serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ArticleDbContext>();
-        await dbContext.Database.MigrateAsync();
-        var articleService = scope.ServiceProvider.GetRequiredService<ArticleService>();
+                using var scope = serviceProvider.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ArticleDbContext>();
+                await dbContext.Database.MigrateAsync();
+                var articleService = scope.ServiceProvider.GetRequiredService<ArticleService>();
 
-        TryParse(hoursAgo, out var hoursNumber);
-        await articleService.GetAndShareArticlesAsync(apiKey, accessToken, hoursNumber, dbContext);
+                TryParse(hoursAgo, out var hoursNumber);
+                await articleService.GetAndShareArticlesAsync(apiKey, accessToken, hoursNumber, dbContext);
+            }
+        }
     }
     
     private static string? GetArgumentValue(string[] args, string key)
